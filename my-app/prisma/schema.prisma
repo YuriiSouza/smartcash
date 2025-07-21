@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  name        String    @unique // Nome do e-book/curso
+  description String?
+  price       Decimal 
+  fileUrl     String    // URL para o arquivo do e-book, vídeo, etc. (Obrigatório, será enviado)
+  isPublished Boolean   @default(false) // Se o produto está ativo para venda
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  purchaseItems PurchaseItem[] // Relação com os itens comprados
+}
+
+// --- Modelo para Compras/Pedidos (sem UserId) ---
+model Purchase {
+  id              String    @id @default(uuid())
+  customerEmail   String    // O e-mail do cliente, essencial para enviar o produto
+  totalAmount     Decimal
+  mercadoPagoId   String    @unique // ID da transação no Mercado Pago (Payment ID ou Preference ID)
+  status          String    @default("pending") // "pending", "approved", "failed", "refunded"
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  purchaseItems   PurchaseItem[] // Itens que fazem parte desta compra
+
+  // Campos para controlar o envio do e-mail
+  emailSent       Boolean   @default(false)
+  emailSentAt     DateTime?
+}
+
+// --- Modelo para os Itens dentro de uma Compra ---
+model PurchaseItem {
+  id          String    @id @default(uuid())
+  purchaseId  String
+  purchase    Purchase  @relation(fields: [purchaseId], references: [id]) // Relação com a compra
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])   // Relação com o produto
+  quantity    Int       @default(1)
+  unitPrice   Decimal
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

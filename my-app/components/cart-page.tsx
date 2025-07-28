@@ -93,8 +93,17 @@ export function CartPage() {
                           </Badge>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-purple-600 text-sm sm:text-base">{item.price}</div>
-                          <div className="text-xs text-gray-500 line-through">{item.originalPrice}</div>
+                          <div className="font-bold text-purple-600 text-sm sm:text-base">
+                            {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                              }).format(item.price)}</div>
+                          <div className="text-xs text-gray-500 line-through">
+                            {new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            }).format(item.originalPrice)}
+                          </div>
                         </div>
                       </div>
 

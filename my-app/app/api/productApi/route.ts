@@ -1,0 +1,27 @@
+import { Category } from '../../../lib/generated/prisma';
+import { PrismaClient } from '@/lib/generated/prisma';
+
+const prisma = new PrismaClient();
+
+export async function GET(request: Request) {
+  try {
+    const product = await prisma.product.findMany()
+    const category = await prisma.category.findMany()
+    
+    return new Response(JSON.stringify({
+      sucess: true,
+      products: product,
+      categories: category
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json'}
+    }
+    );
+
+  } catch (error: any) {
+    console.error('Erro no processamento dos categorias', error);
+    return new Response(JSON.stringify({ error: 'Erro interno do servidor.' }), { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+}

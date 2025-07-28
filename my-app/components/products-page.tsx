@@ -2,9 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search, Filter, BookOpen, Calculator, Package } from "lucide-react"
-import { Header } from "./header"
 import { Footer } from "./footer"
 import { ProductCard } from "./product-card"
 import { Input } from "@/components/ui/input"
@@ -12,19 +11,20 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { HeaderProducts } from "./header-products"
+import axios from "axios"
 
-type ProductType = "all" | "ebook" | "planilha" | "kit"
+type ProductType = "all" | "ebook" | "planilha" | "KitCompleto"
 
 interface Product {
   id: string
   title: string
   description: string
-  price: string
-  originalPrice: string
-  discount: string
+  price: number
+  originalPrice: number
+  discount: number
   rating: number
   reviews: number
-  type: "Ebook" | "Planilha" | "Kit Completo"
+  type: "Ebook" | "Planilha" | "KitCompleto"
   icon: React.ReactNode
   gradient: string
   buttonGradient: string
@@ -32,116 +32,34 @@ interface Product {
   tags: string[]
 }
 
-const products: Product[] = [
-  {
-    id: "1",
-    title: "Guia Completo: Primeiros Passos nas Finanças",
-    description: "Aprenda os fundamentos essenciais para organizar sua vida financeira do zero",
-    price: "R$ 29,90",
-    originalPrice: "R$ 49,90",
-    discount: "40% OFF",
-    rating: 5,
-    reviews: 127,
-    type: "Ebook",
-    icon: <BookOpen className="h-16 w-16 text-white" />,
-    gradient: "bg-gradient-to-br from-purple-400 to-blue-500",
-    buttonGradient: "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700",
-    category: "Iniciante",
-    tags: ["básico", "organização", "fundamentos"],
-  },
-  {
-    id: "2",
-    title: "Planilha de Controle Financeiro Pessoal",
-    description: "Controle completo de receitas, gastos e metas financeiras em uma planilha intuitiva",
-    price: "R$ 19,90",
-    originalPrice: "R$ 39,90",
-    discount: "50% OFF",
-    rating: 5,
-    reviews: 89,
-    type: "Planilha",
-    icon: <Calculator className="h-16 w-16 text-white" />,
-    gradient: "bg-gradient-to-br from-blue-400 to-teal-500",
-    buttonGradient: "bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700",
-    category: "Ferramentas",
-    tags: ["controle", "gastos", "receitas", "metas"],
-  },
-  {
-    id: "3",
-    title: "Kit Jovem Financeiro",
-    description: "Combo com 5 ebooks + 10 planilhas + bônus exclusivos para dominar suas finanças",
-    price: "R$ 97,00",
-    originalPrice: "R$ 297,00",
-    discount: "67% OFF",
-    rating: 5,
-    reviews: 234,
-    type: "Kit Completo",
-    icon: (
-      <div className="flex gap-4">
-        <BookOpen className="h-12 w-12 text-white" />
-        <Calculator className="h-12 w-12 text-white" />
-      </div>
-    ),
-    gradient: "bg-gradient-to-br from-teal-400 to-purple-500",
-    buttonGradient: "bg-gradient-to-r from-teal-600 to-purple-600 hover:from-teal-700 hover:to-purple-700",
-    category: "Completo",
-    tags: ["combo", "completo", "ebooks", "planilhas", "bônus"],
-  },
-  {
-    id: "4",
-    title: "Ebook: Investimentos para Iniciantes",
-    description: "Guia prático para começar a investir com segurança e inteligência",
-    price: "R$ 39,90",
-    originalPrice: "R$ 59,90",
-    discount: "33% OFF",
-    rating: 5,
-    reviews: 156,
-    type: "Ebook",
-    icon: <BookOpen className="h-16 w-16 text-white" />,
-    gradient: "bg-gradient-to-br from-green-400 to-blue-500",
-    buttonGradient: "bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700",
-    category: "Investimentos",
-    tags: ["investimentos", "iniciante", "segurança", "renda fixa"],
-  },
-  {
-    id: "5",
-    title: "Planilha de Planejamento de Aposentadoria",
-    description: "Calcule quanto precisa poupar para se aposentar com tranquilidade",
-    price: "R$ 24,90",
-    originalPrice: "R$ 49,90",
-    discount: "50% OFF",
-    rating: 5,
-    reviews: 73,
-    type: "Planilha",
-    icon: <Calculator className="h-16 w-16 text-white" />,
-    gradient: "bg-gradient-to-br from-orange-400 to-red-500",
-    buttonGradient: "bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700",
-    category: "Planejamento",
-    tags: ["aposentadoria", "planejamento", "longo prazo", "previdência"],
-  },
-  {
-    id: "6",
-    title: "Ebook: Como Sair das Dívidas",
-    description: "Estratégias comprovadas para quitar dívidas e reconquistar sua liberdade financeira",
-    price: "R$ 27,90",
-    originalPrice: "R$ 44,90",
-    discount: "38% OFF",
-    rating: 5,
-    reviews: 198,
-    type: "Ebook",
-    icon: <BookOpen className="h-16 w-16 text-white" />,
-    gradient: "bg-gradient-to-br from-red-400 to-pink-500",
-    buttonGradient: "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700",
-    category: "Dívidas",
-    tags: ["dívidas", "quitação", "estratégias", "liberdade financeira"],
-  },
-]
-
 export function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState<ProductType>("all")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const categories = ["all", ...Array.from(new Set(products.map((p) => p.category)))]
+  useEffect(() => {
+      const fecthData = async () => {
+        try {
+          setLoading(true)
+          setError(null)
+
+          const response = await axios.get('api/productApi')
+
+          setCategories(response.data.categories)
+          setProducts(response.data.products)
+        } catch (error) {
+          console.error('Erro ao coletar as categories', error)
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      fecthData();
+    }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
@@ -153,7 +71,7 @@ export function ProductsPage() {
       selectedType === "all" ||
       (selectedType === "ebook" && product.type === "Ebook") ||
       (selectedType === "planilha" && product.type === "Planilha") ||
-      (selectedType === "kit" && product.type === "Kit Completo")
+      (selectedType === "KitCompleto" && product.type === "KitCompleto")
 
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
 
@@ -217,25 +135,25 @@ export function ProductsPage() {
                 Planilhas
               </Button>
               <Button
-                variant={selectedType === "kit" ? "default" : "outline"}
-                onClick={() => setSelectedType("kit")}
+                variant={selectedType === "KitCompleto" ? "default" : "outline"}
+                onClick={() => setSelectedType("KitCompleto")}
                 className="flex items-center gap-2"
               >
                 <Package className="h-4 w-4" />
-                Kits
+                Kit Completo
               </Button>
             </div>
 
             {/* Category Filter */}
             <div className="flex gap-2 flex-wrap">
-              {categories.map((category) => (
+              {categories.map((category: any) => (
                 <Badge
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
+                  key={category.id}
+                  variant={selectedCategory === category.name ? "default" : "outline"}
                   className="cursor-pointer hover:bg-purple-100"
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => setSelectedCategory(category.name)}
                 >
-                  {category === "all" ? "Todas Categorias" : category}
+                  {category.name === "all" ? "Todas Categorias" : category.name}
                 </Badge>
               ))}
             </div>
@@ -260,6 +178,7 @@ export function ProductsPage() {
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
+                  id={product.id}
                   title={product.title}
                   description={product.description}
                   price={product.price}

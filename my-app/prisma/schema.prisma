@@ -14,43 +14,141 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique // O email deve ser único para cada usuário
+  cpf           String   @unique // O hash da senha (nunca salve senhas em texto puro!)
+  firstName     String? // Nome é opcional ou pode ser coletado depois
+  lastName      String? // Sobrenome é opcional
+  phone         String?
+  zipCode       String?
+  address       String?
+  city          String?
+  state         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  emailVerified Boolean? @default(false)
+
+  purchases Purchase[]
+  reviews   Review[]
+
+  @@map("users") // Nome da tabela no banco de dados
+}
+
+// Modelo principal para produtos
 model Product {
-  id          String    @id @default(uuid())
-  name        String    @unique // Nome do e-book/curso
-  description String?
-  price       Decimal 
-  fileUrl     String    // URL para o arquivo do e-book, vídeo, etc. (Obrigatório, será enviado)
-  isPublished Boolean   @default(false) // Se o produto está ativo para venda
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  purchaseItems PurchaseItem[] // Relação com os itens comprados
+  id             String         @id @default(uuid())
+  title          String
+  description    String
+  price          Float
+  originalPrice  Float
+  discount       Float
+  rating         Float
+  reviewsCount   Int            @map("reviews") // Renomeado para evitar conflito com a relação 'reviews'
+  type           ProductType
+  icon           String
+  gradient       String
+  buttonGradient String
+  category       Category       @relation(fields: [categoryId], references: [id]) // Relação com Category
+  categoryId     String // Campo para armazenar o ID da categoria
+  tags           ProductTag[] // Relação com ProductTag (tabela de junção para muitos-para-muitos)
+  reviews        Review[] // Relação com Review (um produto pode ter muitas avaliações)
+  purchaseItems  PurchaseItem[] // Relação com os itens comprados
+  isPublished    Boolean
+  fileUrl        String
+}
+
+// Enum para os tipos de produto (mantido)
+enum ProductType {
+  Ebook
+  Planilha
+  KitCompleto
+}
+
+// Novo modelo para Categorias
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique // O nome da categoria deve ser único
+  products Product[] // Uma categoria pode ter muitos produtos
+
+  @@map("categories")
+}
+
+// Novo modelo para Tags
+// Usamos uma tabela de junção (ProductTag) para a relação muitos-para-muitos entre Product e Tag
+model Tag {
+  id          String       @id @default(uuid())
+  name        String       @unique // O nome da tag deve ser único
+  productTags ProductTag[] // R Relação com a tabela de junção
+
+  @@map("tags")
+}
+
+// Tabela de junção para a relação muitos-para-muitos entre Product e Tag
+model ProductTag {
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  tagId     String
+  tag       Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([productId, tagId]) // Chave primária composta
+  @@map("product_tags")
+}
+
+// Novo modelo para Avaliações (Reviews)
+model Review {
+  id        String   @id @default(uuid())
+  rating    Float // A avaliação em si (ex: de 1 a 5 estrelas)
+  comment   String?
+  createdAt DateTime @default(now()) // Data e hora da avaliação
+
+  productId String // ID do produto que está sendo avaliado
+  product   Product @relation(fields: [productId], references: [id]) // Relação com Product
+
+  userId String? // O ID do usuário que fez a avaliação (opcional, se permitir avaliações anônimas)
+  user   User?   @relation(fields: [userId], references: [id]) // A relação com o modelo User
+
+  @@map("reviews")
 }
 
 // --- Modelo para Compras/Pedidos (sem UserId) ---
 model Purchase {
-  id              String    @id @default(uuid())
-  customerEmail   String    // O e-mail do cliente, essencial para enviar o produto
-  totalAmount     Decimal
-  mercadoPagoId   String    @unique // ID da transação no Mercado Pago (Payment ID ou Preference ID)
-  status          String    @default("pending") // "pending", "approved", "failed", "refunded"
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  purchaseItems   PurchaseItem[] // Itens que fazem parte desta compra
+  id            String         @id @default(uuid())
+  customerEmail String // O e-mail do cliente, essencial para enviar o produto
+  totalAmount   Float
+  mercadoPagoId String          // ID da transação no Mercado Pago (Payment ID ou Preference ID)
+  status        String         @default("pending") // "pending", "approved", "failed", "refunded"
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  purchaseItems PurchaseItem[] // Itens que fazem parte desta compra
 
   // Campos para controlar o envio do e-mail
-  emailSent       Boolean   @default(false)
-  emailSentAt     DateTime?
+  emailSent   Boolean   @default(false)
+  emailSentAt DateTime?
+
+  userId String? // Campo para a chave estrangeira do User (opcional, se permitir guest checkout)
+  user   User?   @relation(fields: [userId], references: [id])
 }
 
 // --- Modelo para os Itens dentro de uma Compra ---
 model PurchaseItem {
-  id          String    @id @default(uuid())
-  purchaseId  String
-  purchase    Purchase  @relation(fields: [purchaseId], references: [id]) // Relação com a compra
-  productId   String
-  product     Product   @relation(fields: [productId], references: [id])   // Relação com o produto
-  quantity    Int       @default(1)
-  unitPrice   Decimal
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id String @id @default(uuid())
+
+  quantity  Int     @default(1)
+  unitPrice Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id]) // Relação com a compra
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id]) // Relação com o produto
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(uuid()) // Unique ID for the subscriber
+  email     String   @unique // The email, must be unique
+  createdAt DateTime @default(now()) // When the subscriber was added
 }

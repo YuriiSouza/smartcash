@@ -17,7 +17,7 @@ export function Hero() {
           <span className="text-gray-900">Finanças Pessoais</span>
         </h1>
         <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
-          Ebooks e planilhas práticas para quem querem sair do zero e construir um patrimônio rentave;.
+          Ebooks e planilhas práticas para quem querem sair do zero e construir um patrimônio rentavel.
           Aprenda de forma eficaz e aplicável!
         </p>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">

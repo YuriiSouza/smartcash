@@ -121,23 +121,23 @@ async function main() {
     },
   });
 
-  const product3 = await prisma.product.create({
-    data: {
-      id: uuidv4(),
-      title: 'Como escolher um FII.',
-      description: 'Entenda os criterios e como escolher o Fundo Imobiliario que melhor encaixa nos seus planos.',
-      price: 89.90,
-      originalPrice: 120.00,
-      discount: 0.33,
-      rating: 4.8,
-      reviewsCount: 200,
-      type: 'Ebook',
-      icon: 'Lightbulb', // Apenas o nome do ícone (ou "Kit" se você tiver um componente customizado)
-      categoryId: investimentos.id,
-      isPublished: true,
-      fileUrl: 'comoescolherfundoImobiliario.pdf'
-    },
-  });
+  // const product3 = await prisma.product.create({
+  //   data: {
+  //     id: uuidv4(),
+  //     title: 'Como escolher um FII.',
+  //     description: 'Entenda os criterios e como escolher o Fundo Imobiliario que melhor encaixa nos seus planos.',
+  //     price: 89.90,
+  //     originalPrice: 120.00,
+  //     discount: 0.33,
+  //     rating: 4.8,
+  //     reviewsCount: 200,
+  //     type: 'Ebook',
+  //     icon: 'Lightbulb', // Apenas o nome do ícone (ou "Kit" se você tiver um componente customizado)
+  //     categoryId: investimentos.id,
+  //     isPublished: true,
+  //     fileUrl: 'comoescolherfundoImobiliario.pdf'
+  //   },
+  // });
   console.log('Produtos criados.');
 
   // 6. Conectar Tags aos Produtos (ProductTag)
@@ -147,8 +147,8 @@ async function main() {
       { productId: product1.id, tagId: tagInvestimento.id },
       { productId: product2.id, tagId: tagPlanilha.id },
       { productId: product2.id, tagId: tagFinancas.id },
-      { productId: product3.id, tagId: tagEbook.id },
-      { productId: product3.id, tagId: tagSEO.id },
+      // { productId: product3.id, tagId: tagEbook.id },
+      // { productId: product3.id, tagId: tagSEO.id },
     ],
   });
   console.log('Tags conectadas aos produtos.');

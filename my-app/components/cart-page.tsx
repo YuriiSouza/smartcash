@@ -97,12 +97,12 @@ export function CartPage() {
                             {new Intl.NumberFormat('pt-BR', {
                                 style: 'currency',
                                 currency: 'BRL',
-                              }).format(item.price)}</div>
+                              }).format(Number(item.price))}</div>
                           <div className="text-xs text-gray-500 line-through">
                             {new Intl.NumberFormat('pt-BR', {
                               style: 'currency',
                               currency: 'BRL',
-                            }).format(item.originalPrice)}
+                            }).format(Number(item.originalPrice))}
                           </div>
                         </div>
                       </div>

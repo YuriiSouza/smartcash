@@ -23,6 +23,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.525.0",
     "mercadopago": "^2.8.0",
+    "mongodb": "^6.18.0",
     "next": "15.4.1",
     "nodemailer": "^7.0.5",
     "nodemailer-mailgun-transport": "^2.1.5",

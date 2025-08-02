@@ -1,6 +1,10 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago'; // Import Payment to fetch payment details
 import { PrismaClient } from '@/lib/generated/prisma';
 import { sendSimpleMessage } from '@/lib/emailService';
+import path from 'path';
+import fs from "fs/promises"; // Importe o módulo 'fs'
+import { PDFDocument, rgb } from "pdf-lib"; // Importe PDFDocument e rgb
+
 
 
 const prisma = new PrismaClient();
@@ -37,6 +41,7 @@ export async function POST(request: Request) {
         include: {
           user: { // Inclui os dados do usuário que fez a compra
             select: {
+              id: true,
               firstName: true,
               email: true, // Para garantir que temos o email do usuário
             },
@@ -66,7 +71,7 @@ export async function POST(request: Request) {
       const purchasedProducts = purchase.purchaseItems;
 
       // Se o status mudou para aprovado E o email ainda não foi enviado
-      if (status === 'aproved' && purchase.status !== 'approved' && !purchase.emailSent) {
+      if (status === 'approved' && purchase.status !== 'approved' && !purchase.emailSent) {
         await prisma.purchase.update({
           where: { id: purchase.id },
           data: {
@@ -163,7 +168,55 @@ export async function POST(request: Request) {
             Visite nosso site: www.smartcash.com.br
         `;
 
-        const subjective = 'Boas vindas ao Smartcash';
+        // Array para armazenar todos os anexos
+        const attachments = [];
+
+        // Itera sobre o array de caminhos de arquivo
+        for (const item of purchase.purchaseItems) {
+          try {
+            const filePath = path.join(process.cwd(), 'data', item.product.fileUrl);
+            const originalPdfBytes = await fs.readFile(filePath);
+            
+            // 1. Carrega o PDF com a biblioteca pdf-lib
+            const pdfDoc = await PDFDocument.load(originalPdfBytes);
+            const pages = pdfDoc.getPages();
+            
+            // 2. Cria a marca d'água com o email do usuário
+            const watermarkText = `Cópia para: ${purchase.user?.id}`;
+
+          for (const page of pages) {
+              const { height } = page.getSize();
+              // Adiciona um loop para repetir a marca d'água a cada 200px
+              for (let y = height; y >= 0; y -= 200) {
+                  page.drawText(watermarkText, {
+                      x: 20,
+                      y: y,
+                      size: 12,
+                      color: rgb(0.5, 0.5, 0.5),
+                      opacity: 0.3,
+                  });
+              }
+            }
+            // 3. Salva o PDF modificado em um Buffer
+            const modifiedPdfBytes = await pdfDoc.save();
+
+            // 4. Adiciona o Buffer à lista de anexos
+            attachments.push({
+              data: Buffer.from(modifiedPdfBytes),
+              filename: path.basename(filePath),
+            });
+
+          } catch (fileError) {
+            console.error(`Erro ao processar arquivo para o produto ${item.product.id}:`, fileError);
+            // Continua para o próximo item mesmo com erro
+          }
+        }
+        
+        // Prepara o conteúdo do e-mail
+        const subjective = `Seu Pedido Smartcash #${purchase.id} Foi Confirmado!`;
+        const purchasedProductsTitles = purchase.purchaseItems.map(item => `- ${item.product.title}`).join('\n');
+        
+        
 
         try {
           sendSimpleMessage(
@@ -171,7 +224,7 @@ export async function POST(request: Request) {
             subjective,
             htmlContent,
             textContent,
-            productLinks
+            attachments
           )
         } catch {
           console.error('email não foi enviado')

@@ -2,6 +2,11 @@
 import { NextResponse } from "next/server"
 import { PrismaClient } from "@/lib/generated/prisma" // Adjust import path if necessary
 import { sendSimpleMessage } from "@/lib/emailService"
+import fs from "fs/promises"; // Importe o módulo 'fs'
+import path from "path";
+
+import { PDFDocument, rgb } from "pdf-lib"; // Importe PDFDocument e rgb
+
 
 const prisma = new PrismaClient()
 
@@ -147,6 +152,7 @@ export async function POST(req: Request) {
 
   const subjective = 'Boas vindas ao Smartcash';
 
+
   try {
     const { email } = await req.json()
 
@@ -155,7 +161,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email inválido." }, { status: 400 })
     }
 
-    // // Check if email already exists
+    // Check if email already exists
     const existingSubscriber = await prisma.newsletterSubscriber.findUnique({
       where: { email },
     })
@@ -175,10 +181,11 @@ export async function POST(req: Request) {
       email,
       subjective,
       htmlContent,
-      textContent
+      textContent,
+
     )
 
-    return NextResponse.json({ message: "Email cadastrado com sucesso!", subscriber: newSubscriber }, { status: 200 })
+    return NextResponse.json({ message: "Email cadastrado com sucesso!"}, { status: 200 })
   } catch (error) {
     console.error("Erro ao cadastrar newsletter:", error)
     return NextResponse.json({ error: "Erro interno do servidor." }, { status: 500 })

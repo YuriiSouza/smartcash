@@ -47,8 +47,6 @@ model Product {
   reviewsCount   Int            @map("reviews") // Renomeado para evitar conflito com a relação 'reviews'
   type           ProductType
   icon           String
-  gradient       String
-  buttonGradient String
   category       Category       @relation(fields: [categoryId], references: [id]) // Relação com Category
   categoryId     String // Campo para armazenar o ID da categoria
   tags           ProductTag[] // Relação com ProductTag (tabela de junção para muitos-para-muitos)

@@ -26,6 +26,7 @@
     "next": "15.4.1",
     "nodemailer": "^7.0.5",
     "nodemailer-mailgun-transport": "^2.1.5",
+    "pdf-lib": "^1.17.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.60.0",

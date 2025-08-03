@@ -57,37 +57,34 @@ async function main() {
   // 3. Criar Categorias
   const categoryFinances = await prisma.category.create({
     data: {
-      id: uuidv4(),
       name: 'Finanças Pessoais'
     },
   });
   const categoryMarketing = await prisma.category.create({
     data: {
-      id: uuidv4(),
       name: 'Marketing Digital'
     },
   });
   const investimentos = await prisma.category.create({
     data: {
-      id: uuidv4(),
       name: 'Investimentos'
     },
   });
   console.log('Categorias criadas.');
 
   // 4. Criar Tags
-  const tagEbook = await prisma.tag.create({ data: { id: uuidv4(), name: 'Ebook' } });
-  const tagPlanilha = await prisma.tag.create({ data: { id: uuidv4(), name: 'Planilha' } });
-  const tagInvestimento = await prisma.tag.create({ data: { id: uuidv4(), name: 'Investimento' } });
-  const tagSEO = await prisma.tag.create({ data: { id: uuidv4(), name: 'SEO' } });
-  const tagGestaoTempo = await prisma.tag.create({ data: { id: uuidv4(), name: 'Gestão de Tempo' } });
-  const tagFinancas = await prisma.tag.create({ data: { id: uuidv4(), name: 'Finanças' } });
+  const tagEbook = await prisma.tag.create({ data: {  name: 'Ebook' } });
+  const tagPlanilha = await prisma.tag.create({ data: { name: 'Planilha' } });
+  const tagInvestimento = await prisma.tag.create({ data: {  name: 'Investimento' } });
+  const tagSEO = await prisma.tag.create({ data: {  name: 'SEO' } });
+  const tagGestaoTempo = await prisma.tag.create({ data: {  name: 'Gestão de Tempo' } });
+  const tagFinancas = await prisma.tag.create({ data: {  name: 'Finanças' } });
   console.log('Tags criadas.');
 
   // 5. Criar Produtos
   const product1 = await prisma.product.create({
     data: {
-      id: uuidv4(),
+      
       title: 'Guia Introdutorio',
       description: 'Entenda o basico dos investimentos e tenha um material para rapida consulta quando tiver dúvidas.',
       price: 10.00,
@@ -105,7 +102,7 @@ async function main() {
 
   const product2 = await prisma.product.create({
     data: {
-      id: uuidv4(),
+      
       title: 'Como escolher uma ação.',
       description: 'Entenda os criterios e como escolher a ação que melhor encaixa nos seus planos.',
       price: 45.90,
@@ -147,8 +144,6 @@ async function main() {
       { productId: product1.id, tagId: tagInvestimento.id },
       { productId: product2.id, tagId: tagPlanilha.id },
       { productId: product2.id, tagId: tagFinancas.id },
-      // { productId: product3.id, tagId: tagEbook.id },
-      // { productId: product3.id, tagId: tagSEO.id },
     ],
   });
   console.log('Tags conectadas aos produtos.');

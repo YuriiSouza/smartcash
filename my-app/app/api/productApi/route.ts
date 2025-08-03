@@ -5,6 +5,8 @@ export async function GET(request: Request) {
   try {
     const product = await prisma.product.findMany()
     const category = await prisma.category.findMany()
+
+    console.log(product)
     
     return new Response(JSON.stringify({
       sucess: true,

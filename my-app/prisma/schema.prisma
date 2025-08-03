@@ -32,7 +32,6 @@ model User {
   purchases Purchase[]
   reviews   Review[]
 
-  @@map("users") // Nome da tabela no banco de dados
 }
 
 // Modelo principal para produtos
@@ -44,7 +43,7 @@ model Product {
   originalPrice  Float
   discount       Float
   rating         Float
-  reviewsCount   Int            @map("reviews") // Renomeado para evitar conflito com a relação 'reviews'
+  reviewsCount   Int?
   type           ProductType
   icon           String
   category       Category       @relation(fields: [categoryId], references: [id]) // Relação com Category
@@ -55,7 +54,6 @@ model Product {
   isPublished    Boolean
   fileUrl        String
 
-  @@map("products")
 }
 
 // Enum para os tipos de produto (mantido)
@@ -71,7 +69,6 @@ model Category {
   name     String    @unique // O nome da categoria deve ser único
   products Product[] // Uma categoria pode ter muitos produtos
 
-  @@map("categories")
 }
 
 // Novo modelo para Tags
@@ -81,7 +78,6 @@ model Tag {
   name        String       @unique // O nome da tag deve ser único
   productTags ProductTag[] // Relação com a tabela de junção
 
-  @@map("tags")
 }
 
 // Tabela de junção para a relação muitos-para-muitos entre Product e Tag
@@ -92,7 +88,6 @@ model ProductTag {
   tagId     String @db.ObjectId
   tag       Tag     @relation(fields: [tagId], references: [id])
 
-  @@map("product_tags")
 }
 
 // Novo modelo para Avaliações (Reviews)
@@ -108,7 +103,6 @@ model Review {
   userId String? @db.ObjectId // O ID do usuário que fez a avaliação (opcional, se permitir avaliações anônimas)
   user   User?   @relation(fields: [userId], references: [id]) // A relação com o modelo User
 
-  @@map("reviews")
 }
 
 // --- Modelo para Compras/Pedidos (sem UserId) ---
@@ -129,7 +123,6 @@ model Purchase {
   userId String? @db.ObjectId // Campo para a chave estrangeira do User (opcional, se permitir guest checkout)
   user   User?   @relation(fields: [userId], references: [id])
 
-  @@map("purchases")
 }
 
 // --- Modelo para os Itens dentro de uma Compra ---
@@ -148,7 +141,6 @@ model PurchaseItem {
   productId String @db.ObjectId
   product   Product @relation(fields: [productId], references: [id]) // Relação com o produto
 
-  @@map("purchase_items")
 }
 
 model NewsletterSubscriber {
@@ -156,5 +148,4 @@ model NewsletterSubscriber {
   email     String   @unique // The email, must be unique
   createdAt DateTime @default(now()) // When the subscriber was added
 
-  @@map("newsletter_subscribers")
 }

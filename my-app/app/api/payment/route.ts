@@ -1,11 +1,7 @@
-import { PrismaClient } from '@/lib/generated/prisma';
+import prisma from '@/lib/prisma';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs únicos (npm install uuid)
-
-
-const prisma = new PrismaClient(); // Inicializa o Prisma Client
-
 
 export async function POST(request: Request) {
   const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACESS_TOKEN || '' });
@@ -177,7 +173,7 @@ export async function POST(request: Request) {
       },
 
       external_reference: newPurchase.id,
-      notification_url: process.env.MERCADO_PAGO_WEBHOOK_URL,
+      notification_url: "https://seusite.com.br/api/webhooks/mercadopago",
 
       additional_info: {
         items: itemsPayment,

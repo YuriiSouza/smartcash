@@ -1,13 +1,9 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago'; // Import Payment to fetch payment details
-import { PrismaClient } from '@/lib/generated/prisma';
+import prisma from '@/lib/prisma';
 import { sendSimpleMessage } from '@/lib/emailService';
 import path from 'path';
 import fs from "fs/promises"; // Importe o módulo 'fs'
 import { PDFDocument, rgb } from "pdf-lib"; // Importe PDFDocument e rgb
-
-
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {

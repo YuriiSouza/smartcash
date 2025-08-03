@@ -1,14 +1,8 @@
 // app/api/newsletter/route.ts
 import { NextResponse } from "next/server"
-import { PrismaClient } from "@/lib/generated/prisma" // Adjust import path if necessary
+import prisma from "@/lib/prisma";
 import { sendSimpleMessage } from "@/lib/emailService"
-import fs from "fs/promises"; // Importe o módulo 'fs'
-import path from "path";
 
-import { PDFDocument, rgb } from "pdf-lib"; // Importe PDFDocument e rgb
-
-
-const prisma = new PrismaClient()
 
 export async function POST(req: Request) {
   const htmlContent = `

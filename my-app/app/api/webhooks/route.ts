@@ -106,7 +106,7 @@ export async function POST(request: Request) {
                       <table border="0" cellpadding="0" cellspacing="0" width="600" class="container" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
                         <tr>
                           <td align="center" style="padding: 30px 20px 10px 20px;">
-                            <a href="https://www.smartcash.com.br" style="text-decoration: none;">
+                            <a href="https://smartcash-black.vercel.app" style="text-decoration: none;">
                               <img src="https://via.placeholder.com/150x60/8B5CF6/FFFFFF?text=Smartcash" alt="Logo da Smartcash" width="150" style="display: block;" />
                             </a>
                           </td>
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
                         <tr>
                           <td align="center" style="padding: 20px 40px; font-size: 12px; color: #aaaaaa; border-top: 1px solid #eeeeee;">
                             <p style="margin-bottom: 5px;">Smartcash &copy; 2025. Todos os direitos reservados.</p>
-                            <p style="margin-top: 0;">Visite nosso site: <a href="https://www.smartcash.com.br" style="color: #8B5CF6; text-decoration: underline;">www.smartcash.com.br</a></p>
+                            <p style="margin-top: 0;">Visite nosso site: <a href="https://smartcash-black.vercel.app" style="color: #8B5CF6; text-decoration: underline;">https://smartcash-black.vercel.app</a></p>
                           </td>
                         </tr>
                       </table>
@@ -161,7 +161,7 @@ export async function POST(request: Request) {
             A Equipe Smartcash
 
             Smartcash © 2025. Todos os direitos reservados.
-            Visite nosso site: www.smartcash.com.br
+            Visite nosso site: www.https://smartcash-black.vercel.app
         `;
 
         // Array para armazenar todos os anexos
@@ -211,8 +211,6 @@ export async function POST(request: Request) {
         // Prepara o conteúdo do e-mail
         const subjective = `Seu Pedido Smartcash #${purchase.id} Foi Confirmado!`;
         const purchasedProductsTitles = purchase.purchaseItems.map(item => `- ${item.product.title}`).join('\n');
-        
-        
 
         try {
           sendSimpleMessage(

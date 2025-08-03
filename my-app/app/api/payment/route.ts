@@ -173,7 +173,7 @@ export async function POST(request: Request) {
       },
 
       external_reference: newPurchase.id,
-      notification_url: "https://seusite.com.br/api/webhooks/mercadopago",
+      notification_url: "https://smartcash-black.vercel.app/api/webhooks",
 
       additional_info: {
         items: itemsPayment,

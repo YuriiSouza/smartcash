@@ -57,7 +57,7 @@ export default function FAQPage() {
         {
           question: "Como posso entrar em contato com o Smart Cash?",
           answer:
-            "Você pode nos contatar através do formulário em nossa página de Contato, ou enviar um e-mail diretamente para [seu_email@smartcash.com.br]. Nosso tempo de resposta é de até 24 horas úteis.",
+            "Você pode nos contatar através do formulário em nossa página de Contato, ou enviar um e-mail diretamente para [yuripeixoto1112@gmail.com]. Nosso tempo de resposta é de até 24 horas úteis.",
         },
         {
           question: "Vocês oferecem consultoria individual?",

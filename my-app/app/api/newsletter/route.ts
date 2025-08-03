@@ -135,7 +135,7 @@ export async function POST(req: Request) {
     Nosso objetivo é te ajudar a conquistar seus objetivos financeiros, de forma simples e prática.
 
     Para começar, que tal conferir alguns dos nossos produtos que podem transformar sua vida financeira?
-    Acesse: https://www.smartcash.com.br/produtos
+    Acesse: https://www.https://smartcash-black.vercel.app/produtos
 
     Atenciosamente,
     A Equipe Smartcash

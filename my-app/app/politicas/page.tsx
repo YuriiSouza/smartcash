@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
         </h1>
         <p className="mb-4 text-lg">
             A sua privacidade é uma prioridade para nós no <strong className="font-semibold text-gray-900">Smart Cash</strong>. Esta política detalha como coletamos, usamos, armazenamos e protegemos suas informações quando você utiliza nosso site{' '}
-            <a href="https://smartcashinvestiment.com.br" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            <a href="https://smartcash-black.vercel.app" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
             smartcashinvestiment.com.br
             </a>{' '}
             e quaisquer outros sites que possuímos e operamos. Nosso compromisso é garantir a segurança e a transparência no tratamento dos seus dados.

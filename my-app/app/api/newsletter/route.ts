@@ -135,13 +135,12 @@ export async function POST(req: Request) {
     Nosso objetivo é te ajudar a conquistar seus objetivos financeiros, de forma simples e prática.
 
     Para começar, que tal conferir alguns dos nossos produtos que podem transformar sua vida financeira?
-    Acesse: https://www..com.br/produtos
+    Acesse: https://www.smartcash.com.br/produtos
 
     Atenciosamente,
     A Equipe Smartcash
 
     Smartcash © 2025. Todos os direitos reservados.
-    Para cancelar sua inscrição: https://www..com.br/unsubscribe
   `;
 
   const subjective = 'Boas vindas ao Smartcash';
@@ -176,14 +175,11 @@ export async function POST(req: Request) {
       subjective,
       htmlContent,
       textContent,
-
     )
 
     return NextResponse.json({ message: "Email cadastrado com sucesso!"}, { status: 200 })
   } catch (error) {
     console.error("Erro ao cadastrar newsletter:", error)
     return NextResponse.json({ error: "Erro interno do servidor." }, { status: 500 })
-  } finally {
-    await prisma.$disconnect() // Ensure the Prisma client disconnects
-  }
+  } 
 }

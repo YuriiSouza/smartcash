@@ -19,7 +19,5 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Erro no processamento dos categorias', error);
     return new Response(JSON.stringify({ error: 'Erro interno do servidor.' }), { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

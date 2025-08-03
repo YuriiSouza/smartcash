@@ -14,7 +14,7 @@ export async function sendSimpleMessage(to: any, subjective: any, htmlContent: a
     const data = await mg.messages.create("sandbox79411476ba8b49a9b7d90e8943ce5ccc.mailgun.org", {
       from: "Contact <postmaster@sandbox79411476ba8b49a9b7d90e8943ce5ccc.mailgun.org>",
       to: to || ["Yuri Peixoto de Souza <yuripeixoto1112@gmail.com>"],
-      subject: subjective || "Hello Yuri Peixoto de Souza",
+      subject: subjective || "Hello",
       text: textContent || '',
       html: htmlContent || '',
       attachment: attachmentData || null

@@ -194,8 +194,6 @@ export async function POST(request: Request) {
 
     // Chamada para a SDK do Mercado Pago
     const mpPaymentResponse = await payment.create({body: paymentBody, requestOptions});
-
-    console.log(mpPaymentResponse)
   
     // --- 4. Atualizar o ID do Pagamento do MP na Compra ---
     await prisma.purchase.update({
@@ -264,8 +262,6 @@ export async function POST(request: Request) {
       status: error.status || 500, // Usa o status do erro do MP se disponível
       headers: { 'Content-Type': 'application/json' },
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

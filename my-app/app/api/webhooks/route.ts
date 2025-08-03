@@ -251,8 +251,6 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Erro no processamento do webhook do Mercado Pago:', error);
     return new Response(JSON.stringify({ error: 'Erro interno do servidor.' }), { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

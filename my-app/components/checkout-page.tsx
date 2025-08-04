@@ -119,7 +119,7 @@ export function CheckoutPage() {
     if (response.data && response.data.success) { // Se o backend indicou 'success: true'
       // Se for PIX, redireciona para a página do QR Code
       if (paymentMethod === "pix" && response.data.qrCode && response.data.qrCodeBase64) {
-          router.push(`/pixDetails/${response.data.purchaseId}?qrCode=${encodeURIComponent(response.data.qrCode)}&qrCodeBase64=${encodeURIComponent(response.data.qrCodeBase64)}`);
+          router.push(`/pixDetails?qrCode=${encodeURIComponent(response.data.qrCode)}&qrCodeBase64=${encodeURIComponent(response.data.qrCodeBase64)}`);
       } else {
           // Se não é PIX (é cartão aprovado), redireciona para a página de sucesso genérica
           router.push('/orderSuccess');

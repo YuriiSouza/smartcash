@@ -1,7 +1,6 @@
 import prisma from '@/lib/prisma';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs únicos (npm install uuid)
 
 export async function POST(request: Request) {
   const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACESS_TOKEN || '' });

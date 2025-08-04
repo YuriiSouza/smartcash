@@ -17,11 +17,9 @@ interface ProductCardProps {
   originalPrice: number
   discount: number
   rating: number
-  reviews: number
+  reviews: string
   type: "Ebook" | "Planilha" | "KitCompleto"
-  icon: React.ReactNode
-  gradient: string
-  buttonGradient: string
+  icon: string
 }
 
 export function ProductCard({
@@ -32,9 +30,7 @@ export function ProductCard({
   originalPrice,
   discount,
   reviews,
-  type,
-  gradient,
-  buttonGradient,
+  type
 }: ProductCardProps) {
   const { dispatch } = useCart()
 
@@ -43,7 +39,7 @@ export function ProductCard({
   const typeColors = {
     Ebook: "bg-green-100 text-green-700",
     Planilha: "bg-blue-100 text-blue-700",
-    "KitCompleto": "bg-teal-100 text-teal-700",
+    KitCompleto: "bg-teal-100 text-teal-700",
   }
 
   const _price = price.toString()
@@ -90,14 +86,14 @@ export function ProductCard({
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-purple-200 h-full flex flex-col">
       <CardHeader className="flex-shrink-0">
-        <div className={`w-full h-32 sm:h-40 md:h-48 ${gradient} rounded-lg mb-4 flex items-center justify-center`}>
-          {type=='Ebook'&&
+        <div className={`w-full h-32 sm:h-40 md:h-48 rounded-lg mb-4 flex items-center justify-center bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-500 text-white`}>
+          {type==='Ebook' &&
             <BookOpen className="h-16 w-16 text-white" />
           }
-          {type=='Planilha'&&
+          {type=='Planilha' &&
             <Calculator className="h-16 w-16 text-white" />
           }
-          {type=='KitCompleto'&&
+          {type=='KitCompleto' &&
             (
               <div className="flex gap-4">
                 <BookOpen className="h-12 w-12 text-white" />
@@ -146,7 +142,7 @@ export function ProductCard({
             <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             Carrinho
           </Button>
-          <Button onClick={handleAddToCartBuy} className={`flex-1 ${buttonGradient} text-xs sm:text-sm`}>Comprar</Button>
+          <Button onClick={handleAddToCartBuy} className={`flex-1 text-xs sm:text-sm`}>Comprar</Button>
         </div>
       </CardContent>
     </Card>

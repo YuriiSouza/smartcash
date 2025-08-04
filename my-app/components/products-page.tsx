@@ -23,11 +23,9 @@ interface Product {
   originalPrice: number
   discount: number
   rating: number
-  reviews: number
+  reviewsCount: string
   type: "Ebook" | "Planilha" | "KitCompleto"
-  icon: React.ReactNode
-  gradient: string
-  buttonGradient: string
+  icon: string
   category: string
   tags: string[]
 }
@@ -185,11 +183,9 @@ export function ProductsPage() {
                   originalPrice={product.originalPrice}
                   discount={product.discount}
                   rating={product.rating}
-                  reviews={product.reviews}
+                  reviews={product.reviewsCount}
                   type={product.type}
                   icon={product.icon}
-                  gradient={product.gradient}
-                  buttonGradient={product.buttonGradient}
                 />
               ))}
             </div>

@@ -6,7 +6,7 @@ export async function sendSimpleMessage(to: any, subjective: any, htmlContent: a
 
   const mg = mailgun.client({
     username: "api",
-    key: process.env.EMAIL_API_KEY || "API_KEY",
+    key: process.env.MAILGUN_API_KEY || "API_KEY",
     // When you have an EU-domain, you must specify the endpoint:
     url: "https://api.mailgun.net"
   });

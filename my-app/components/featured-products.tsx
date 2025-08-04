@@ -15,29 +15,20 @@ interface Product {
   originalPrice: number
   discount: number
   rating: number
-  reviews: number
+  reviews: string
   type: "Ebook" | "Planilha" | "KitCompleto"
-  icon: React.ReactNode
-  gradient: string
-  buttonGradient: string
+  icon: string
   category: string
   tags: string[]
 }
 
 export function FeaturedProducts() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedType, setSelectedType] = useState<ProductType>("all")
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
       const fecthData = async () => {
         try {
-          setLoading(true)
-          setError(null)
 
           const response = await axios.get('api/productApi')
 
@@ -48,8 +39,6 @@ export function FeaturedProducts() {
           console.log(response.data.categories)
         } catch (error) {
           console.error('Erro ao coletar as categories', error)
-        } finally {
-          setLoading(false)
         }
       }
 
@@ -80,8 +69,6 @@ export function FeaturedProducts() {
                 reviews={product.reviews}
                 type={product.type}
                 icon={product.icon}
-                gradient={product.gradient}
-                buttonGradient={product.buttonGradient}
               />
             ))}
         </div>

@@ -13,6 +13,7 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+<<<<<<< HEAD
 
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -20,11 +21,27 @@ model User {
   cpf           String    @unique // O hash da senha (nunca salve senhas em texto puro!)
   firstName     String? // Nome é opcional ou pode ser coletado depois
   lastName      String? // Sobrenome é opcional
+=======
+ 
+model User {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  cpf           String?      
+>>>>>>> 9b85b48 (feat: create profile page)
   phone         String?
   zipCode       String?
   address       String?
   city          String?
   state         String?
+<<<<<<< HEAD
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   emailVerified Boolean?  @default(false)
@@ -32,6 +49,74 @@ model User {
   purchases Purchase[]
   reviews   Review[]
 
+=======
+  neighborhood  String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchases Purchase[]
+  reviews   Review[]
+  productsOwned ProductAccess[]
+}
+ 
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+}
+ 
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+}
+ 
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([userId, credentialID])
+>>>>>>> 9b85b48 (feat: create profile page)
 }
 
 // Modelo principal para produtos
@@ -54,6 +139,10 @@ model Product {
   isPublished    Boolean
   fileUrl        String
 
+<<<<<<< HEAD
+=======
+  users ProductAccess[]
+>>>>>>> 9b85b48 (feat: create profile page)
 }
 
 // Enum para os tipos de produto (mantido)
@@ -116,10 +205,13 @@ model Purchase {
   updatedAt     DateTime       @updatedAt
   purchaseItems PurchaseItem[] // Itens que fazem parte desta compra
 
+<<<<<<< HEAD
   // Campos para controlar o envio do e-mail
   emailSent   Boolean   @default(false)
   emailSentAt DateTime?
 
+=======
+>>>>>>> 9b85b48 (feat: create profile page)
   userId String? @db.ObjectId // Campo para a chave estrangeira do User (opcional, se permitir guest checkout)
   user   User?   @relation(fields: [userId], references: [id])
 
@@ -147,5 +239,20 @@ model NewsletterSubscriber {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId // Unique ID for the subscriber
   email     String   @unique // The email, must be unique
   createdAt DateTime @default(now()) // When the subscriber was added
+<<<<<<< HEAD
 
+=======
+}
+
+model ProductAccess {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  userId String @db.ObjectId // Campo para a chave estrangeira do User (opcional, se permitir guest checkout)
+  user   User   @relation(fields: [userId], references: [id])
+
+  productId String @db.ObjectId // Campo para a chave estrangeira do User (opcional, se permitir guest checkout)
+  product   Product   @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+>>>>>>> 9b85b48 (feat: create profile page)
 }

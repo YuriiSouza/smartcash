@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import { Category } from '../../../lib/generated/prisma';
 import prisma from '@/lib/prisma';
+=======
+import { prisma } from "@/lib/prisma";
+>>>>>>> 9b85b48 (feat: create profile page)
 
 export async function GET(request: Request) {
   try {

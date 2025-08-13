@@ -1,9 +1,13 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago'; // Import Payment to fetch payment details
+<<<<<<< HEAD
 import prisma from '@/lib/prisma';
 import { sendSimpleMessage } from '@/lib/emailService';
 import path from 'path';
 import fs from "fs/promises"; // Importe o módulo 'fs'
 import { PDFDocument, rgb } from "pdf-lib"; // Importe PDFDocument e rgb
+=======
+import { prisma } from '@/lib/prisma';
+>>>>>>> 9b85b48 (feat: create profile page)
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +36,7 @@ export async function POST(request: Request) {
       // --- 2. Atualizar o Status da Compra no DB ---
      const purchase = await prisma.purchase.findUnique({
         where: {
+<<<<<<< HEAD
           id: externalReference, // Busca a compra pelo mercadoPagoId
         },
         include: {
@@ -45,11 +50,29 @@ export async function POST(request: Request) {
           purchaseItems: { // Inclui os itens da compra
             include: {
               product: { // Para cada item, inclui os detalhes do produto
+=======
+          id: externalReference,
+        },
+        include: {
+          user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+          },
+          purchaseItems: {
+            include: {
+              product: {
+>>>>>>> 9b85b48 (feat: create profile page)
                 select: {
                   id: true,
                   title: true,
                   fileUrl: true,
+<<<<<<< HEAD
                   // Inclua outras propriedades do produto que você precisar
+=======
+>>>>>>> 9b85b48 (feat: create profile page)
                 },
               },
             },
@@ -67,15 +90,24 @@ export async function POST(request: Request) {
       const purchasedProducts = purchase.purchaseItems;
 
       // Se o status mudou para aprovado E o email ainda não foi enviado
+<<<<<<< HEAD
       if (status === 'approved' && purchase.status !== 'approved' && !purchase.emailSent) {
         await prisma.purchase.update({
           where: { id: purchase.id },
           data: {
             status: 'approved',
+=======
+      if (status === 'pending' && purchase.status !== 'approved') {
+        await prisma.purchase.update({
+          where: { id: purchase.id },
+          data: {
+            status: 'pending',
+>>>>>>> 9b85b48 (feat: create profile page)
             mercadoPagoId: paymentId,
           },
         });
 
+<<<<<<< HEAD
         // --- 3. Enviar o E-mail com o Produto ---
         const productLinks = purchase.purchaseItems.map(item => `- ${item.product.title}: ${item.product.fileUrl}`).join('\n');
 
@@ -232,6 +264,25 @@ export async function POST(request: Request) {
         } catch (emailError) {
           console.error(`Erro ao enviar email para ${purchase.customerEmail}:`, emailError);
           // Você pode querer registrar isso em um sistema de log de erros ou tentar novamente
+=======
+        const userId = purchase.user?.id; // Lembre-se de corrigir o include para pegar o user
+
+        if (userId) {
+          // Mapeia os itens comprados para criar os objetos que serão inseridos
+          const productAccessData = purchase.purchaseItems.map(item => ({
+            userId: userId,
+            productId: item.productId,
+          }));
+
+          // Usa uma transação para garantir que todos os produtos sejam adicionados
+          await prisma.$transaction(
+            productAccessData.map(data =>
+              prisma.productAccess.create({
+                data,
+              })
+            )
+          );
+>>>>>>> 9b85b48 (feat: create profile page)
         }
 
       } else if (status !== 'pending' && purchase.status !== status) {

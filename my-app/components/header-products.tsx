@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-=======
 'use client'
->>>>>>> 9b85b48 (feat: create profile page)
 import Link from "next/link"
 import { TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CartButton } from "./cart-button"
-<<<<<<< HEAD
-
-export function HeaderProducts() {
-=======
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -25,7 +18,6 @@ export function HeaderProducts() {
     await signIn();
   }
 
->>>>>>> 9b85b48 (feat: create profile page)
   return (
     <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -45,8 +37,6 @@ export function HeaderProducts() {
         <nav className="hidden md:flex items-center gap-4 lg:gap-6">
           <CartButton />
         </nav>
-<<<<<<< HEAD
-=======
 
         {session ? (
             <div onClick={goToProfile} className="flex bg-gray-300 text-black gap-1">
@@ -57,7 +47,6 @@ export function HeaderProducts() {
             Login
           </Button>
       }
->>>>>>> 9b85b48 (feat: create profile page)
       </div>
     </header>
   )

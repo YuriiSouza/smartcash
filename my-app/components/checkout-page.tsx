@@ -13,156 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useCart } from "@/contexts/cart-context"
 import { HeaderProducts } from "./header-products"
 import axios from "axios"
-<<<<<<< HEAD
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { CardPayment, initMercadoPago, Payment as MercadoPagoPaymentSDK } from '@mercadopago/sdk-react';
-import { useRouter } from 'next/navigation'; // Para App Router
-import { useForm, SubmitHandler } from "react-hook-form";
-import { toast } from "@/hooks/use-toast"
-
-interface CustomerFormData {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  cpf: string;
-  zipCode: string;
-  address: string;
-  city: string;
-  state: string;
-}
-
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || ' ';
-
-export function CheckoutPage() {
-  const { state } = useCart()
-  const router = useRouter();
-  const [paymentMethod, setPaymentMethod] = useState("pix")
-  const [isLoading, setIsLoading] = useState(false); // To manage loading state during submission
-  const [termsAccepted, setTermsAccepted] = useState(false); // State for terms checkbox
-  const { dispatch } = useCart()
-
-
-  // Initialize Mercado Pago SDK once when the component mounts
-  useEffect(() => {
-    if (PUBLIC_KEY && PUBLIC_KEY.trim() !== '') {
-      initMercadoPago(PUBLIC_KEY, { locale: 'pt-BR' });
-    } else {
-      console.error("Mercado Pago Public Key is not set or is invalid. Please check your .env.local file.");
-    }
-  }, []);
-
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<CustomerFormData>({
-    defaultValues: {
-      email: "",
-      firstName: "",
-      lastName: "",
-      phone: "",
-      cpf: "",
-      zipCode: "",
-      address: "",
-      city: "",
-      state: "",
-    }
-  });
-
-    const clearCart = () => {
-    dispatch({
-      type: "CLEAR_CART",
-    })
-  }
-
-  const amountToPay = useMemo(() => {
-    return paymentMethod === "pix"
-      ? state.total * 0.9
-      : state.total * 1;
-  }, [state.total, paymentMethod]);
-
-  const initializationConfig = useMemo(() => ({
-    amount: amountToPay,
-  }), [amountToPay]);
-
-  const customizationConfig = useMemo(() => ({
-    visual: {
-      hideFormTitle: true,
-      hidePaymentButton: false,
-    }
-  }), []);
-
-
-  const formatPrice = (price: any) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price)
-  }
-
-  const handlePaymentSubmission = useCallback(async (
-    customerFormData: CustomerFormData, // Dados do formulário
-    paymentDataFromMP: any = {} // Dados do CardPayment do MP
-  ) => {
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post('/api/payment', {
-        customerInfo: customerFormData, // Enviando os dados do cliente coletados pelo RHF
-        cartItems: state.items.map(item => ({
-          productId: item.id,
-          unitPrice: item.price,
-          quantity: item.quantity
-        })),
-        paymentMethod: paymentMethod,
-        transaction_amount: amountToPay,
-        mercadoPagoData: paymentDataFromMP,
-      });
-
-          // TRATAMENTO DA RESPOSTA DO BACKEND
-    if (response.data && response.data.success) { // Se o backend indicou 'success: true'
-      // Se for PIX, redireciona para a página do QR Code
-      if (paymentMethod === "pix" && response.data.qrCode && response.data.qrCodeBase64) {
-          router.push(`/pixDetails?qrCode=${encodeURIComponent(response.data.qrCode)}&qrCodeBase64=${encodeURIComponent(response.data.qrCodeBase64)}`);
-      } else {
-          // Se não é PIX (é cartão aprovado), redireciona para a página de sucesso genérica
-          router.push('/orderSuccess');
-      }
-      // Exibe um toast de sucesso
-      toast({
-        title: "Pedido processado!",
-        description: response.data.message || "Sua transação foi iniciada com sucesso.",
-        // Adicione um variant 'success' se tiver no seu tema
-      });
-    } else { // Se o backend indicou 'success: false' (pagamento rejeitado ou pendente)
-      // Exibe uma mensagem de erro ou de pagamento pendente
-      toast({
-        title: "Status do Pagamento",
-        description: response.data.message || "Não foi possível finalizar seu pagamento. Por favor, tente novamente.",
-        variant: "destructive", // Usa o variant para erros
-      });
-      // Opcional: Se for cartão rejeitado, pode redirecionar para uma página de erro específica
-      // router.push('/payment-failed');
-    }
-  } catch (error: any) {
-    // Este catch lida com erros de rede, erros do Axios, ou erros não tratados pelo backend.
-    console.error('Erro ao realizar pagamento:', error.response?.data || error.message);
-    let errorMessage = "Ocorreu um erro inesperado ao processar o pagamento.";
-    if (axios.isAxiosError(error) && error.response && error.response.data && error.response.data.error) {
-      errorMessage = error.response.data.error; // Pega a mensagem de erro do backend
-    }
-    toast({
-      title: "Erro Crítico",
-      description: errorMessage,
-      variant: "destructive",
-    });
-  } finally {
-    setIsLoading(false);
-  }
-  }, [paymentMethod, amountToPay, router]); // Dependências da função
-
-
-
-
-  if (state.items.length === 0) {
-=======
 import React, { useEffect, useMemo, useState, useCallback } from "react"
 import { CardPayment, initMercadoPago } from "@mercadopago/sdk-react"
 import { useRouter } from "next/navigation"
@@ -395,7 +245,6 @@ export function CheckoutPage() {
 
   // sem itens no carrinho
   if (items.length === 0) {
->>>>>>> 9b85b48 (feat: create profile page)
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <HeaderProducts />
@@ -417,16 +266,6 @@ export function CheckoutPage() {
     )
   }
 
-<<<<<<< HEAD
-  const onFormSubmit: SubmitHandler<CustomerFormData> = (data) => {
-    if (paymentMethod === "credit") {
-      alert("Formulário de cliente validado. Por favor, preencha os detalhes do cartão acima para prosseguir.");
-    } else if (paymentMethod === "pix") {
-      handlePaymentSubmission(data);
-      clearCart;
-    }
-  };
-=======
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateRequired(formData)) {
@@ -440,7 +279,6 @@ export function CheckoutPage() {
       await handlePaymentSubmission(formData)
     }
   }
->>>>>>> 9b85b48 (feat: create profile page)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
@@ -455,12 +293,7 @@ export function CheckoutPage() {
           <h1 className="text-2xl sm:text-3xl font-bold">Finalizar Compra</h1>
         </div>
 
-<<<<<<< HEAD
-       {/* O formulário agora é envolvido pelo handleSubmit do React Hook Form */}
-        <form onSubmit={handleSubmit(onFormSubmit)}>
-=======
         <form onSubmit={onFormSubmit}>
->>>>>>> 9b85b48 (feat: create profile page)
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
               {/* Contact Information */}
@@ -478,17 +311,10 @@ export function CheckoutPage() {
                       id="email"
                       type="email"
                       required
-<<<<<<< HEAD
-                      {...register("email", { required: true, pattern: /^\S+@\S+$/i })} // Registrar campo
-                      placeholder="seu@email.com"
-                    />
-                    {errors.email && <span className="text-red-500 text-xs">Email é obrigatório e deve ser válido.</span>}
-=======
                       value={formData.email}
                       onChange={handleChange("email")}
                       placeholder="seu@email.com"
                     />
->>>>>>> 9b85b48 (feat: create profile page)
                   </div>
                 </CardContent>
               </Card>
@@ -505,61 +331,21 @@ export function CheckoutPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">Nome *</Label>
-<<<<<<< HEAD
-                      <Input
-                        id="firstName"
-                        required
-                        {...register("firstName", { required: true })} // Registrar campo
-                        placeholder="João"
-                      />
-                      {errors.firstName && <span className="text-red-500 text-xs">Nome é obrigatório.</span>}
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Sobrenome *</Label>
-                      <Input
-                        id="lastName"
-                        required
-                        {...register("lastName", { required: true })} // Registrar campo
-                        placeholder="Silva"
-                      />
-                      {errors.lastName && <span className="text-red-500 text-xs">Sobrenome é obrigatório.</span>}
-=======
                       <Input id="firstName" required value={formData.firstName} onChange={handleChange("firstName")} placeholder="João" />
                     </div>
                     <div>
                       <Label htmlFor="lastName">Sobrenome *</Label>
                       <Input id="lastName" required value={formData.lastName} onChange={handleChange("lastName")} placeholder="Silva" />
->>>>>>> 9b85b48 (feat: create profile page)
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="phone">Telefone *</Label>
-<<<<<<< HEAD
-                      <Input
-                        id="phone"
-                        required
-                        {...register("phone", { required: true })} // Registrar campo
-                        placeholder="(11) 99999-9999"
-                      />
-                      {errors.phone && <span className="text-red-500 text-xs">Telefone é obrigatório.</span>}
-                    </div>
-                    <div>
-                      <Label htmlFor="cpf">CPF *</Label>
-                      <Input
-                        id="cpf"
-                        required
-                        {...register("cpf", { required: true, minLength: 11, maxLength: 14 })} // Exemplo de validação de CPF
-                        placeholder="000.000.000-00"
-                      />
-                      {errors.cpf && <span className="text-red-500 text-xs">CPF é obrigatório e deve ser válido.</span>}
-=======
                       <Input id="phone" required value={formData.phone} onChange={handleChange("phone")} placeholder="(11) 99999-9999" />
                     </div>
                     <div>
                       <Label htmlFor="cpf">CPF *</Label>
                       <Input id="cpf" required value={formData.cpf} onChange={handleChange("cpf")} placeholder="000.000.000-00" />
->>>>>>> 9b85b48 (feat: create profile page)
                     </div>
                   </div>
                 </CardContent>
@@ -580,12 +366,6 @@ export function CheckoutPage() {
                       <Input
                         id="zipCode"
                         required
-<<<<<<< HEAD
-                        {...register("zipCode", { required: true, minLength: 8, maxLength: 9 })} // Exemplo de validação de CEP
-                        placeholder="00000-000"
-                      />
-                      {errors.zipCode && <span className="text-red-500 text-xs">CEP é obrigatório.</span>}
-=======
                         value={formData.zipCode}
                         onChange={handlePostalCodeChange}   // ← aqui
                         onBlur={handlePostalCodeChange}     // ← opcional: garante consulta ao sair do campo
@@ -595,19 +375,12 @@ export function CheckoutPage() {
                       />
                       {cepLoading && <span className="text-xs text-zinc-500">Consultando CEP…</span>}
                       {cepError && <span className="text-xs text-red-500">{cepError}</span>}
->>>>>>> 9b85b48 (feat: create profile page)
                     </div>
                     <div className="sm:col-span-2">
                       <Label htmlFor="address">Endereço *</Label>
                       <Input
                         id="address"
                         required
-<<<<<<< HEAD
-                        {...register("address", { required: true })}
-                        placeholder="Rua, número, complemento"
-                      />
-                      {errors.address && <span className="text-red-500 text-xs">Endereço é obrigatório.</span>}
-=======
                         value={formData.address}
                         onChange={handleChange("address")}
                         placeholder="Rua, número, complemento"
@@ -622,37 +395,16 @@ export function CheckoutPage() {
                         onChange={handleChange("neighborhood")}
                         placeholder="Bairro"
                       />
->>>>>>> 9b85b48 (feat: create profile page)
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="city">Cidade *</Label>
-<<<<<<< HEAD
-                      <Input
-                        id="city"
-                        required
-                        {...register("city", { required: true })}
-                        placeholder="São Paulo"
-                      />
-                      {errors.city && <span className="text-red-500 text-xs">Cidade é obrigatória.</span>}
-                    </div>
-                    <div>
-                      <Label htmlFor="state">Estado *</Label>
-                      <Input
-                        id="state"
-                        required
-                        {...register("state", { required: true, minLength: 2, maxLength: 2 })}
-                        placeholder="SP"
-                      />
-                      {errors.state && <span className="text-red-500 text-xs">Estado é obrigatório.</span>}
-=======
                       <Input id="city" required value={formData.city} onChange={handleChange("city")} placeholder="São Paulo" />
                     </div>
                     <div>
                       <Label htmlFor="state">Estado *</Label>
                       <Input id="state" required value={formData.state} onChange={handleChange("state")} placeholder="SP" />
->>>>>>> 9b85b48 (feat: create profile page)
                     </div>
                   </div>
                 </CardContent>
@@ -660,24 +412,6 @@ export function CheckoutPage() {
 
               <Card>
                 <CardContent>
-<<<<<<< HEAD
-                  <div className="space-y-4"></div>
-                    <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="terms"
-                            required
-                            checked={termsAccepted}
-                            onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-                          />
-                          <Label htmlFor="terms" className="text-sm">
-                            Aceito os{" "}
-                            <Link href="/politicas" className="text-purple-600 hover:underline">
-                              termos e condições
-                            </Link>
-                          </Label>
-                        </div>
-                      <div />
-=======
                   <div className="space-y-4" />
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -693,33 +427,10 @@ export function CheckoutPage() {
                       </Link>
                     </Label>
                   </div>
->>>>>>> 9b85b48 (feat: create profile page)
                 </CardContent>
               </Card>
 
               {/* Payment Method */}
-<<<<<<< HEAD
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <CreditCard className="h-5 w-5" />
-                      Forma de Pagamento
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="credit" id="credit" />
-                        <Label htmlFor="credit">Cartão de Crédito</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="pix" id="pix" />
-                        <Label htmlFor="pix">PIX (5% de desconto)</Label>
-                      </div>
-                    </RadioGroup>
-                  </CardContent>
-                </Card>
-=======
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -741,29 +452,16 @@ export function CheckoutPage() {
                 </CardContent>
               </Card>
 
->>>>>>> 9b85b48 (feat: create profile page)
               {termsAccepted && (
                 <Card>
                   <CardContent>
                     {paymentMethod === "credit" && (
                       <div className="space-y-4 pt-4 border-t">
-<<<<<<< HEAD
-                        {PUBLIC_KEY && PUBLIC_KEY.trim() !== '' ? (
-                          <CardPayment
-                            initialization={initializationConfig}
-                            // Esta é a função que o CardPayment do Mercado Pago chamará
-                            // quando ele tiver os dados do cartão tokenizados.
-                            // Precisamos de uma "ponte" para pegar esses dados e os dados do formulário principal.
-                            onSubmit={async (mpPaymentData) => {
-                              const dataUser = watch()
-                              await handlePaymentSubmission(dataUser, mpPaymentData);
-=======
                         {PUBLIC_KEY && PUBLIC_KEY.trim() !== "" ? (
                           <CardPayment
                             initialization={initializationConfig}
                             onSubmit={async (mpPaymentData) => {
                               await handlePaymentSubmission(formData, mpPaymentData) // usa state
->>>>>>> 9b85b48 (feat: create profile page)
                             }}
                             customization={customizationConfig}
                           />
@@ -777,11 +475,7 @@ export function CheckoutPage() {
                       <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                         <p className="text-sm text-green-700">
                           Ao clicar em "Finalizar Pedido", você receberá o código PIX para pagamento.
-<<<<<<< HEAD
-                          <strong> Desconto de 5% aplicado automaticamente!</strong>
-=======
                           <strong> Desconto de 10% aplicado automaticamente!</strong>
->>>>>>> 9b85b48 (feat: create profile page)
                         </p>
                       </div>
                     )}
@@ -798,22 +492,14 @@ export function CheckoutPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
-<<<<<<< HEAD
-                    {state.items.map((item) => (
-=======
                     {items.map((item) => (
->>>>>>> 9b85b48 (feat: create profile page)
                       <div key={item.id} className="flex justify-between items-start text-sm">
                         <div className="flex-1">
                           <div className="font-medium line-clamp-2">{item.title}</div>
                           <div className="text-gray-500">Qtd: {item.quantity}</div>
                         </div>
                         <div className="text-right ml-2">
-<<<<<<< HEAD
-                          <div className="font-medium">{formatPrice(item.price)}</div>
-=======
                           <div className="font-medium">{formatPrice(Number(item.price))}</div>
->>>>>>> 9b85b48 (feat: create profile page)
                         </div>
                       </div>
                     ))}
@@ -824,70 +510,38 @@ export function CheckoutPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Subtotal</span>
-<<<<<<< HEAD
-                      <span>{formatPrice(state.total)}</span>
-                    </div>
-                    {paymentMethod=="pix" && (
-                      <div className="flex justify-between text-sm text-green-600">
-                        <span>Desconto PIX (10%)</span>
-                        <span>-{formatPrice(state.total * 0.1)}</span>
-=======
                       <span>{formatPrice(total)}</span>
                     </div>
                     {paymentMethod === "pix" && (
                       <div className="flex justify-between text-sm text-green-600">
                         <span>Desconto PIX (10%)</span>
                         <span>-{formatPrice(total * 0.1)}</span>
->>>>>>> 9b85b48 (feat: create profile page)
                       </div>
                     )}
                     <hr />
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total</span>
-<<<<<<< HEAD
-                      <span className="text-purple-600">
-                        {formatPrice(amountToPay)}
-                      </span>
-=======
                       <span className="text-purple-600">{formatPrice(amountToPay)}</span>
->>>>>>> 9b85b48 (feat: create profile page)
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     {paymentMethod === "pix" && (
                       <Button
-<<<<<<< HEAD
-                        type="submit" // Mudar para 'submit' para acionar o handleSubmit do React Hook Form
-                        disabled={isLoading || !termsAccepted}
-                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                      >
-                        {isLoading || !termsAccepted ? "Processando..." : (
-=======
                         type="submit"
                         disabled={isLoading || !termsAccepted || formLoading}
                         className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                       >
                         {isLoading || formLoading ? "Processando..." : (
->>>>>>> 9b85b48 (feat: create profile page)
                           <>
                             <Lock className="h-4 w-4 mr-2" />
                             Finalizar Pedido
                           </>
                         )}
                       </Button>
-<<<<<<< HEAD
-                      
-                    )}
-
-                    <div className="text-xs text-gray-500 text-center">
-                      🔒 Seus dados estão protegidos com criptografia SSL
-                    </div>
-=======
                     )}
 
                     <div className="text-xs text-gray-500 text-center">🔒 Seus dados estão protegidos com criptografia SSL</div>
->>>>>>> 9b85b48 (feat: create profile page)
                   </div>
                 </CardContent>
               </Card>
@@ -897,10 +551,5 @@ export function CheckoutPage() {
       </div>
       <Footer />
     </div>
-<<<<<<< HEAD
-  );
-}
-=======
   )
 }
->>>>>>> 9b85b48 (feat: create profile page)

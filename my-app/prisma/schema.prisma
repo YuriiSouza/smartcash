@@ -13,15 +13,6 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-<<<<<<< HEAD
-
-model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  email         String    @unique // O email deve ser único para cada usuário
-  cpf           String    @unique // O hash da senha (nunca salve senhas em texto puro!)
-  firstName     String? // Nome é opcional ou pode ser coletado depois
-  lastName      String? // Sobrenome é opcional
-=======
  
 model User {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
@@ -35,21 +26,11 @@ model User {
   Authenticator Authenticator[]
 
   cpf           String?      
->>>>>>> 9b85b48 (feat: create profile page)
   phone         String?
   zipCode       String?
   address       String?
   city          String?
   state         String?
-<<<<<<< HEAD
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  emailVerified Boolean?  @default(false)
-
-  purchases Purchase[]
-  reviews   Review[]
-
-=======
   neighborhood  String?
  
   createdAt DateTime @default(now())
@@ -116,7 +97,6 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@unique([userId, credentialID])
->>>>>>> 9b85b48 (feat: create profile page)
 }
 
 // Modelo principal para produtos
@@ -139,10 +119,7 @@ model Product {
   isPublished    Boolean
   fileUrl        String
 
-<<<<<<< HEAD
-=======
   users ProductAccess[]
->>>>>>> 9b85b48 (feat: create profile page)
 }
 
 // Enum para os tipos de produto (mantido)
@@ -205,13 +182,6 @@ model Purchase {
   updatedAt     DateTime       @updatedAt
   purchaseItems PurchaseItem[] // Itens que fazem parte desta compra
 
-<<<<<<< HEAD
-  // Campos para controlar o envio do e-mail
-  emailSent   Boolean   @default(false)
-  emailSentAt DateTime?
-
-=======
->>>>>>> 9b85b48 (feat: create profile page)
   userId String? @db.ObjectId // Campo para a chave estrangeira do User (opcional, se permitir guest checkout)
   user   User?   @relation(fields: [userId], references: [id])
 
@@ -239,9 +209,6 @@ model NewsletterSubscriber {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId // Unique ID for the subscriber
   email     String   @unique // The email, must be unique
   createdAt DateTime @default(now()) // When the subscriber was added
-<<<<<<< HEAD
-
-=======
 }
 
 model ProductAccess {
@@ -254,5 +221,4 @@ model ProductAccess {
   product   Product   @relation(fields: [productId], references: [id])
 
   createdAt DateTime @default(now())
->>>>>>> 9b85b48 (feat: create profile page)
 }

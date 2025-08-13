@@ -3,8 +3,8 @@
 import axios from "axios";
 import { BookOpen, Calculator } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // ---- Tipos ----
 export type PurchasedProduct = {
@@ -24,7 +24,6 @@ function formatDate(iso?: string) {
 
 export default function AccountPage() {
   const router = useRouter();
-  const search = useSearchParams();
 
   const { data: session, status } = useSession();
   const [products, setProducts] = useState<PurchasedProduct[]>([]);

@@ -1,8 +1,6 @@
 // app/api/newsletter/route.ts
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server"
-import prisma from "@/lib/prisma";
-import { sendSimpleMessage } from "@/lib/emailService"
-
 
 export async function POST(req: Request) {
   const htmlContent = `
@@ -169,13 +167,6 @@ export async function POST(req: Request) {
         email,
       },
     })
-
-    sendSimpleMessage(
-      email,
-      subjective,
-      htmlContent,
-      textContent,
-    )
 
     return NextResponse.json({ message: "Email cadastrado com sucesso!"}, { status: 200 })
   } catch (error) {
